@@ -10,6 +10,7 @@
 
 ### Bug fixes
 
+  * Avoid exception-based decoding of host tensor arguments when executing compiled functions
   * Do not donate the inputs of eager `EXLA.Backend` operations, which raised for donatable tensors passed to operations that change their shape
   * Compile every `Nx.block/4` body on its own instead of sharing one compiled body between blocks with the same struct and argument shapes
   * Support f16 in `Nx.LinAlg.triangular_solve/3` on CUDA, which raised "Invalid type for triangular solve"

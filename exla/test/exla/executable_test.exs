@@ -95,6 +95,19 @@ defmodule EXLA.ExecutableTest do
       assert <<3::32-native>> == DeviceBuffer.read(a)
     end
 
+    test "raises for malformed host input typespecs" do
+      executable =
+        compile([s32_typespec()], [], [s32_typespec()], fn _builder, input ->
+          [input]
+        end)
+
+      input = BinaryBuffer.from_binary(<<1::32-native>>, :invalid)
+
+      assert_raise ArgumentError, "decode failed, expected EXLA.Typespec struct", fn ->
+        Executable.run(executable, [[input]])
+      end
+    end
+
     test "with tuple return" do
       t1 = BinaryBuffer.from_binary(<<1::32-native>>, s32_typespec())
       t2 = BinaryBuffer.from_binary(<<2::32-native>>, s32_typespec())

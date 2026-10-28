@@ -35,6 +35,21 @@
 
 #include <vector>
 
+namespace fine {
+
+// Dispatch by term type to avoid exception-based variant decoding for host inputs.
+template <> struct Decoder<exla::ExlaExecutable::ReplicaArgument> {
+  static exla::ExlaExecutable::ReplicaArgument
+  decode(ErlNifEnv *env, const ERL_NIF_TERM &term) {
+    if (enif_is_tuple(env, term)) {
+      return fine::decode<std::tuple<fine::Term, xla::Shape>>(env, term);
+    }
+    return fine::decode<fine::ResourcePtr<exla::ExlaBuffer>>(env, term);
+  }
+};
+
+} // namespace fine
+
 namespace exla {
 
 using callback_bridge::Pending;
